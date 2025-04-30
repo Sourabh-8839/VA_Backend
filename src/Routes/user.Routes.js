@@ -20,13 +20,6 @@ import { jwtVerify } from "../Middlewares/auth.middleware.js";
 const router = Router();
 
 router.route("/registerUser").post(
-  // upload.fields([
-  //   { name: "avatar", maxCount: 1 },
-  //   {
-  //     name: "coverImage",
-  //     maxCount: 1,
-  //   },
-  // ]),
   registerUser
 );
 

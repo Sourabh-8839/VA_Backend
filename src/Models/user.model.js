@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true, trim: true },
   email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true }, // Hashed password
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
@@ -32,14 +31,14 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 userSchema.methods.generateAccessToken = async function () {
-  return await jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
       userName: this.userName,
       email: this.email,
       fullName: this.fullName,
     },
-    process.env.ACCESS_TOKEN_SECRETKEY,
+    process.env.ACCESS_TOKEN_SECRET_KEY,
     { expiresIn: process.env.ACCESS_TOKEN_TIME_DURATION }
   );
 };
@@ -49,7 +48,7 @@ userSchema.methods.generateRefreshToken = async function () {
     {
       _id: this._id,
     },
-    process.env.REFRESH_TOKEN_SECRETKEY,
+    process.env.REFRESH_TOKEN_SECRET_KEY,
     { expiresIn: process.env.REFRESH_TOKEN_TIME_DURATION }
   );
 };

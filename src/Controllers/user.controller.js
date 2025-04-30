@@ -39,12 +39,13 @@ const registerUser = asyncHandler(async (req, res) => {
   //step 5 create user object
   //step 6 send response to user
 
-  const { username, email, fullName, password } = req.body;
-
+  const {  email, fullName, password } = req.body;
+  
   if (
-    [username, email, fullName, password].some((field) => field?.trim === "")
+    [ email, fullName, password].some((field) => field?.trim === "")
   ) {
     throw new ApiError(200, "All fields Required");
+  
   }
 
   if (!email.includes("@gmail"))
@@ -56,37 +57,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "Email is already Existed");
   }
 
-  const existedusername = await User.findOne({ username: username });
-
-  if (existedusername) {
-    throw new ApiError(409, "username is already existed");
-  }
-
-  // const avatarLocalPath = req.files?.avatar[0]?.path;
-
-  // const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
-
-
-  // if (!avatarLocalPath) {
-  //   throw new ApiError(400, "Avatar File is Required");
-  // }
-
-  // const avatar = await uploadOnCloudinary(avatarLocalPath);
-
-  // let coverImage;
-
-  // if (coverImageLocalPath) {
-  //   coverImage = await uploadOnCloudinary(coverImageLocalPath);
-  // }
-
-  // console.log(avatar);
-
-  // if (!avatar) {
-  //   throw new ApiError(400, "Avatar File is Required after upload");
-  // }
-
   const user = await User.create({
-    username: username.toLowerCase(),
     fullName,
     email,
     password,
@@ -101,7 +72,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   return res
-    .status(201)
+    .status(200)
     .json(new ApiResponse(200, createdUser, "User registered Succesfully"));
 });
 
@@ -112,9 +83,14 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, "email or username is required");
   }
 
+  
+
   const user = await User.findOne({
     $or: [{ email }, { username }],
   });
+
+
+  
 
   if (!user) {
     throw new ApiError(404, "user does not exist");
@@ -125,8 +101,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid user credentials");
   }
 
-  const { accessToken, refreshToken } =
-    await genreateRefreshTokenAndaccessToken(user._id);
+  const { accessToken, refreshToken } =await genreateRefreshTokenAndaccessToken(user._id);
 
   const updatedUser = await User.findById(user._id).select(
     "-password -refreshToken"
