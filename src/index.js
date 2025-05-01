@@ -3,8 +3,6 @@ import connectDB from "./Config/database.js";
 import { App } from "./App.js";
 
 
-
-
 const portNumber = process.env.PORT || 8000;
 
 connectDB()

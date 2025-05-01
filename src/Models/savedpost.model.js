@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const savedPostSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -9,4 +9,5 @@ const savedPostSchema = new mongoose.Schema({
   savedAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('SavedPost', savedPostSchema);
+
+export const SavedPost = mongoose.model("SavedPost", savedPostSchema);
