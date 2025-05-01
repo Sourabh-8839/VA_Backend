@@ -165,12 +165,21 @@ const completeProfile = asyncHandler(async(req,res)=>{
 
 const savedPosts = asyncHandler(async(req,res)=>{
   const { source, postId, postData } = req.body;
+
+  const existingPost = await SavedPost.findOne({ postId });
+
+  if (existingPost) {
+    throw new ApiError(400, "Post is already saved.");
+  }
+
+
   const savedPost = new SavedPost({
     user: req.user.id,
     source,
     postId,
     postData,
   });
+
   await savedPost.save();
 
   // Add credits to the user
@@ -184,7 +193,8 @@ const savedPosts = asyncHandler(async(req,res)=>{
   .json(
     new ApiResponse(
       200,
-      "User login succesfully "
+      savedPost,
+      "Post saved succesfully"
     )
   );
 })
